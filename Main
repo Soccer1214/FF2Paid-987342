@@ -1,0 +1,460 @@
+local whitelist = {"ohma4life", "Soccer_GamingOnYT"}
+
+
+local function isPlayerWhitelisted(player)
+    return table.find(whitelist, player.Name) ~= nil
+end
+
+local function onPlayerAdded(player)
+    if isPlayerWhitelisted(player) then
+
+local Rayfield = loadstring(game:HttpGet('https://pastebin.com/raw/ifLJ3CTz'))()
+local Window = Rayfield:CreateWindow({
+    Name = "Hexez Hub",
+    LoadingTitle = "Hexez HUB Interface Suite",
+    LoadingSubtitle = "By Ohma & Bishop",
+    ConfigurationSaving = {
+       Enabled = false,
+       FolderName = nil, -- Create a custom folder for your hub/game
+       FileName = "Hexez"
+    },
+    Discord = {
+       Enabled = false,
+       Invite = "yWwUGMUMXK", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD.
+       RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+    },
+    KeySystem = true, -- Set this to true to use our key system
+    KeySettings = {
+       Title = "Hexez Hub",
+       Subtitle = "Hexez's Key System",
+       Note = "Join the discord (https://discord.gg/yWwUGMUMXK)",
+       FileName = "HexezKey",
+       SaveKey = true,
+       GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+       Key = "4402608"
+    }
+ })
+ local Tab1 = Window:CreateTab("Main", 7733960981)
+ local Tab2 = Window:CreateTab("Player", 7743871480)
+ local Tab3 = Window:CreateTab("Physics", 7733741741)
+ local Tab4 = Window:CreateTab("Credits", 7743877573) -- Title, Image
+ local Tab6 = Window:CreateTab("Configs", 7734053495) -- Title, Image
+ 
+ --MAIN TAB FUNCTIONS
+local rs = game:GetService("RunService")
+local plr = game.Players.LocalPlayer
+
+local function updateMagDistance()
+    for _,v in pairs(workspace:GetChildren()) do
+        if v.Name=="Football" then
+            local cl=plr.Character['CatchLeft']
+            local cr=plr.Character['CatchRight']
+            firetouchinterest(cl,v,0)
+            firetouchinterest(cr,v,0)
+            task.wait()
+            firetouchinterest(cl,v,1)
+            firetouchinterest(cr,v,1)
+        end
+    end
+end
+
+local toggleValue = false
+local sliderValue = 10
+
+local Slider = Tab1:CreateSlider({
+   Name = "Football Mag Distance",
+   Range = {0, 200},
+   Increment = 10,
+   Suffix = "Studs",
+   CurrentValue = sliderValue,
+   Flag = "Slider1",
+   Callback = function(Value)
+       sliderValue = Value
+       if toggleValue then
+           _G.reach = Value
+           updateMagDistance()
+       end
+   end,
+})
+
+local Toggle = Tab1:CreateToggle({
+   Name = "Football Mags",
+   CurrentValue = toggleValue,
+   Flag = "Toggle1",
+   Callback = function(Value)
+       toggleValue = Value
+       if toggleValue then
+           _G.reach = sliderValue
+           updateMagDistance()
+       else
+           _G.reach = 0
+       end
+   end,
+})
+
+
+-- Create the part outside of the toggle
+-- Create the part outside of the toggle
+local part = Instance.new("Part")
+part.Name = "TogglePart"
+part.Size = Vector3.new(500, 5, 500)
+part.CFrame = CFrame.new(121.7, -5.4, -5.8)
+part.Anchored = true
+part.CanCollide = true
+part.Parent = workspace
+
+local Toggle = Tab1:CreateToggle({
+   Name = "Create Underground Part",
+   CurrentValue = false,
+   Flag = "Toggle1", 
+   Callback = function(Value)
+       -- Toggle the visibility of the part
+       part.Transparency = not Value and 1 or 0
+       part.CanCollide = Value
+   end,
+})
+
+local transparencyValue = 0.7
+local toggleValue = false
+local player = game:GetService("Players").LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Save the original transparency value of each part
+local originalTransparency = {}
+local parts = workspace:GetDescendants()
+for i, part in ipairs(parts) do
+    if part:IsA("BasePart") and (part.Name ~= "Football" and part.Name ~= "SGGaming") and not part:IsDescendantOf(character) then
+        originalTransparency[part] = part.Transparency
+    end
+end
+
+local function updateTransparency()
+    for part, originalValue in pairs(originalTransparency) do
+        part.Transparency = toggleValue and transparencyValue or originalValue
+    end
+end
+
+local Toggle = Tab1:CreateToggle({
+    Name = "Toggle Transparency",
+    CurrentValue = toggleValue,
+    Flag = "ToggleTransparency",
+    Callback = function(value)
+        toggleValue = value
+        updateTransparency()
+    end,
+})
+
+
+local Toggle = Tab1:CreateToggle({
+   Name = "Disable Field Collisions",
+   CurrentValue = false,
+   Flag = "DisableCollisionsToggle",
+   Callback = function(Value)
+      local parts = workspace:GetDescendants()
+      for i, part in ipairs(parts) do
+         if part:IsA("BasePart") and (part.Name == "Grass" or part.Name == "Part") then
+            part.CanCollide = not Value
+         end
+      end
+   end,
+})
+--PHYSICS TAB FUCNTIONS
+local clickkick = mouse1click or leftpress or (Input and Input.LeftClick()) or playclick
+local mousemove = mousemoveabs or function() end
+
+local function kick()
+    if toggles and toggles.kickaim then -- check if toggles is defined and if the kickaim toggle is enabled
+        repeat
+            step:wait()
+        until plr.PlayerGui:FindFirstChild("KickerGui")
+        local kickerGui = plr.PlayerGui:FindFirstChild("KickerGui")
+        local meter = kickerGui:FindFirstChild("Meter")
+        local cursor = meter:FindFirstChild("Cursor")
+        local mid = workspace.CurrentCamera.ViewportSize * Vector2.new(0.5, 0.5)
+        mousemove(mid.X, mid.Y)
+        clickkick()
+        repeat
+            step:wait()
+        until cursor.Position.Y.Scale < 0.01
+        cursor.Position = UDim2.new(0, 0, 0.01, 0)
+        click_func()
+        repeat
+            step:wait()
+        until cursor.Position.Y.Scale > .85
+        cursor.Position = UDim2.new(0, 0, 0.9, 0)
+        clickkick()
+    end
+end
+
+
+local Toggle = Tab3:CreateToggle({
+    Name = "Kicker Aimbot",
+    CurrentValue = false,
+    Flag = "Toggle1",
+    Callback = function(Value)
+        if Value then
+            kick()
+        end
+    end,
+})
+local function onChildAdded(child)
+    if child.Name == "KickerGui" and whateveryourtoggleis then
+        wait(2)
+        kick()
+    end
+end
+
+-- check if KickerGui is already in PlayerGui
+if plr.PlayerGui:FindFirstChild("KickerGui") and whateveryourtoggleis then
+    wait(2)
+    kick()
+end
+
+-- set up ChildAdded event listener on PlayerGui
+plr.PlayerGui.ChildAdded:Connect(onChildAdded)
+--PLAYER TAB FUNCTIONS
+ local WalkSpeedSlider = Tab2:CreateSlider({
+   Name = "Walk Speed",
+   Range = {0, 40},
+   Increment = 1,
+   CurrentValue = 16,
+   Flag = "WalkSpeedSlider",
+   Callback = function(Value)
+       game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+   end,
+})
+
+local JumpPowerSlider = Tab2:CreateSlider({
+   Name = "Jump Power",
+   Range = {0, 80},
+   Increment = 1,
+   CurrentValue = 50,
+   Flag = "JumpPowerSlider",
+   Callback = function(Value)
+       game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+   end,
+})
+-- Define the function to create a toggle
+local function CreateToggle(Name, CurrentValue, Callback)
+    local Toggle = Tab2:CreateToggle({
+        Name = Name,
+        CurrentValue = CurrentValue,
+        Flag = "Toggle1",
+        Callback = Callback,
+    })
+    return Toggle
+end
+
+-- Create the toggle
+local SilentWalkSpeedToggle = CreateToggle("Silent WalkSpeed", false, function(Value)
+    if Value then
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 19
+    else
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+    end
+end)
+-- Define the function to create a toggle
+local function CreateToggle(Name, CurrentValue, Callback)
+local Toggle = Tab2:CreateToggle({
+Name = Name,
+CurrentValue = CurrentValue,
+Flag = "Toggle1",
+Callback = Callback,
+})
+return Toggle
+end
+
+-- Create the toggle
+local SilentJumpPowerToggle = CreateToggle("Silent JumpPower", false, function(Value)
+if Value then
+game.Players.LocalPlayer.Character.Humanoid.JumpPower = 58
+else
+game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
+end
+end)
+-- Define the function to create a toggle
+local function CreateToggle(Name, CurrentValue, Callback)
+local Toggle = Tab2:CreateToggle({
+Name = Name,
+CurrentValue = CurrentValue,
+Flag = "Toggle1",
+Callback = Callback,
+})
+return Toggle
+end
+
+-- Create the toggle
+local InfJumpToggle = CreateToggle("Infinite Jump", false, function(Value)
+local Player = game.Players.LocalPlayer
+local Humanoid = Player.Character:FindFirstChildOfClass("Humanoid")
+if Value then
+local Connection
+Connection = game:GetService("UserInputService").JumpRequest:Connect(function()
+Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+end)
+InfJumpConnection = Connection
+else
+InfJumpConnection:Disconnect()
+InfJumpConnection = nil
+end
+end)
+local Noclip = nil
+local Clip = nil
+
+function noclip()
+    Clip = false
+    local function Nocl()
+        if Clip == false and game.Players.LocalPlayer.Character ~= nil then
+            for _,v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                if v:IsA('BasePart') and v.CanCollide and v.Name ~= floatName then
+                    v.CanCollide = false
+                end
+            end
+        end
+        wait(0.21) -- basic optimization
+    end
+    Noclip = game:GetService('RunService').Stepped:Connect(Nocl)
+end
+
+function clip()
+    if Noclip then Noclip:Disconnect() end
+    Clip = true
+    if game.Players.LocalPlayer.Character ~= nil then
+        for _,v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+            if v:IsA('BasePart') and not v.CanCollide and v.Name ~= floatName then
+                v.CanCollide = true
+            end
+        end
+    end
+end
+
+local Toggle = Tab2:CreateToggle({
+   Name = "Noclip",
+   CurrentValue = false,
+   Flag = "NoclipToggle",
+   Callback = function(Value)
+       if Value then
+           noclip()
+       else
+           clip()
+       end
+   end,
+})
+--CONFIGS TAB FUNCTIONS
+--TELEPORTS TAB FUNCTIONS
+ --MISC TAB FUNCTIONS (TAB3)
+ --CREDITS TAB FUNCTIONS
+ local Section = Tab4:CreateSection("Credits")
+ local Button = Tab4:CreateButton({
+   Name = "Copy Discord Invite!",
+   Callback = function()
+setclipboard("https://discord.gg/56QAmJ3T")
+    end,
+})
+ local Button = Tab4:CreateButton({
+   Name = "Copyable - Ohma#8375 || Owner",
+   Callback = function()
+setclipboard("Ohma#8375")
+    end,
+})
+local Button = Tab4:CreateButton({
+   Name = "Copyable - Bishop#2082 || Dev",
+   Callback = function()
+setclipboard("Bishop#2082")
+    end,
+})
+
+local Input = Tab6:CreateInput({
+   Name = "Save Config",
+   PlaceholderText = "Config Name",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(Text)
+   end,
+})
+local Button = Tab6:CreateButton({
+   Name = "Save Config",
+   Callback = function()
+   -- The function that takes place when the button is pressed
+   end,
+})
+local Input = Tab6:CreateInput({
+   Name = "Load Config",
+   PlaceholderText = "Config Name",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(Text)
+   end,
+})
+local Button = Tab6:CreateButton({
+   Name = "Load Config",
+   Callback = function()
+   -- The function that takes place when the button is pressed
+   end,
+})
+local Label = Tab6:CreateLabel("                                 ⬇  Confused? Read Below.  ⬇")
+local Paragraph = Tab6:CreateParagraph({Title = "                                      How To Use Configs", Content = "If You Want To Save Your Config, Enter The Name, Then Press The Save Config Button, Then Next Time You Use The Script Enter The Config Name You Saved It As In Load Config, Then Press The Load Config Button. Then You Are Done, It's That Simple! GL AND HF!!!"})
+ local Section = Tab:CreateSection("Main Tab")
+ Rayfield:Notify({
+    Title = "🌀 Hexez Hub 👽",
+    Content = "                                                                 Thx 4 Buying, Pls Share!",
+    Duration = 6.5,
+    Actions = { -- Notification Buttons
+       Ignore = {
+          Name = "Okay!",
+          Callback = function()
+          print("The user tapped Okay!")
+       end
+    },
+ },
+ })
+end
+end
+
+
+-- Check all current players
+
+for _, player in ipairs(game.Players:GetPlayers()) do
+    onPlayerAdded(player)
+end
+
+-- Connect the function to the PlayerAdded event for new players
+game.Players.PlayerAdded:Connect(onPlayerAdded)
+
+    function Notify(titletxt, text, time)
+    local GUI = Instance.new("ScreenGui")
+    local Main = Instance.new("Frame", GUI)
+    local title = Instance.new("TextLabel", Main)
+    local message = Instance.new("TextLabel", Main)
+    GUI.Name = "NotificationOof"
+    GUI.Parent = game.CoreGui
+    Main.Name = "MainFrame"
+    Main.BackgroundColor3 = Color3.new(0.156863, 0.156863, 0.156863)
+    Main.BorderSizePixel = 0
+    Main.Position = UDim2.new(0.5, -165, 0.5, -50) -- center position
+    Main.Size = UDim2.new(0, 330, 0, 100)
+ 
+    title.BackgroundColor3 = Color3.new(0, 0, 0)
+    title.BackgroundTransparency = 0.89999997615814
+    title.Size = UDim2.new(1, 0, 0, 30)
+    title.Font = Enum.Font.SourceSansSemibold
+    title.Text = titletxt
+    title.TextColor3 = Color3.new(87, 51, 138) --- Color to liking
+    title.TextSize = 25  --- Size to liking
+ 
+    message.BackgroundColor3 = Color3.new(0, 0, 0)
+    message.BackgroundTransparency = 1
+    message.Position = UDim2.new(0, 0, 0, 30)
+    message.Size = UDim2.new(1, 0, 1, -30)
+    message.Font = Enum.Font.SourceSans
+    message.Text = text
+    message.TextColor3 = Color3.new(87, 51, 138)  --- color to liking
+    message.TextSize = 15   --- Size to liking
+ 
+    wait(0.1)
+    Main:TweenPosition(UDim2.new(0.5, -165, 0.5, -50), "Out", "Sine", 0.5) -- center position
+    wait(time)
+    Main:TweenPosition(UDim2.new(1, 5, 0, 50), "Out", "Sine", 0.5)
+    wait(10.0)
+    GUI:Destroy();
+end
+ 
+Notify("Hexez Hub", "You Are Not Whitelist, Help: https://discord.gg/56QAmJ3T ", 5)
